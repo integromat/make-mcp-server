@@ -1,0 +1,11 @@
+# system related
+.DS_Store
+.vscode
+
+#test related
+coverage/*
+
+# App related
+.env
+node_modules/*
+**/build/*
