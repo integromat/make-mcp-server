@@ -13,35 +13,43 @@ const PRIMITIVE_TYPE_MAP = {
 };
 
 export class MakeError extends Error {
-    detail?: string;
     statusCode?: number;
+    subErrors?: string[];
 
-    constructor(message: string, statusCode?: number, detail?: string) {
+    constructor(message: string, statusCode?: number) {
         super(message);
 
-        this.name = 'HTTPError';
-        this.detail = detail;
+        this.name = 'MakeError';
         this.statusCode = statusCode;
+    }
+
+    toString() {
+        return `${this.name}: ${this.message}` + (this.subErrors?.length ? `\n - ${this.subErrors.join('\n - ')}` : '');
     }
 }
 
 export async function createMakeError(res: Response): Promise<MakeError> {
     try {
-        const err: unknown = await res.clone().json();
-        if (isObject(err) && 'message' in err && typeof err.message === 'string') {
-            if ('detail' in err && typeof err.detail === 'string') {
-                return new MakeError(err.message, res.status, err.detail);
+        const body: unknown = await res.clone().json();
+        if (isObject(body) && 'message' in body && typeof body.message === 'string') {
+            const message = 'detail' in body && typeof body.detail === 'string' ? body.detail : body.message;
+            const err = new MakeError(message, res.status);
+            if ('suberrors' in body && Array.isArray(body.suberrors)) {
+                err.subErrors = body.suberrors
+                    .filter(suberr => {
+                        return isObject(suberr) && 'message' in suberr && typeof suberr.message === 'string';
+                    })
+                    .map(suberr => {
+                        return suberr.message;
+                    });
             }
-            return new MakeError(err.message, res.status);
+            return err;
         }
     } catch (err: unknown) {
         // Do nothing.
     }
-    try {
-        return new MakeError(res.statusText, res.status, await res.clone().text());
-    } catch (err: unknown) {
-        return new MakeError(res.statusText, res.status);
-    }
+
+    return new MakeError(res.statusText, res.status);
 }
 
 function noEmpty(text: string | undefined): string | undefined {

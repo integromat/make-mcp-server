@@ -1,0 +1,11 @@
+{
+    "detail": "Validation failed for 1 parameter(s).",
+    "message": "Bad Request",
+    "code": "SC400",
+    "suberrors": [
+        {
+            "message": "Missing value of required parameter 'number'.",
+            "name": "Error"
+        }
+    ]
+}

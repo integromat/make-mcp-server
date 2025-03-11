@@ -11,7 +11,8 @@ const MAKE_TEAM = 1;
 import * as scenariosMock from './mocks/scenarios.json';
 import * as interfaceMock from './mocks/interface.json';
 import * as runMock from './mocks/run.json';
-import { remap } from '../src/utils.js';
+import * as runErrorMock from './mocks/run-error.json';
+import { MakeError, remap } from '../src/utils.js';
 
 describe('Make SDK', () => {
     const make = new Make(MAKE_API_KEY, MAKE_ZONE);
@@ -62,6 +63,35 @@ describe('Make SDK', () => {
         });
 
         expect(await make.scenarios.run(1, {})).toStrictEqual(runMock);
+    });
+
+    it('Should handle error in scenario run', async () => {
+        fetchMock.mockResponse(req => {
+            if (req.url !== 'https://make.local/api/v2/scenarios/1/run')
+                throw new Error(`Unmocked HTTP request: ${req.url}`);
+
+            return Promise.resolve({
+                body: JSON.stringify(runErrorMock),
+                status: 400,
+                headers: {
+                    'content-type': 'application/json',
+                },
+            });
+        });
+
+        try {
+            await make.scenarios.run(1, {});
+            throw new Error('Should throw an error.');
+        } catch (err: unknown) {
+            if (!(err instanceof MakeError)) throw new Error('Should throw MakeError.');
+
+            expect(err.name).toBe('MakeError');
+            expect(err.message).toBe('Validation failed for 1 parameter(s).');
+            expect(err.subErrors).toEqual(["Missing value of required parameter 'number'."]);
+            expect(String(err)).toEqual(
+                "MakeError: Validation failed for 1 parameter(s).\n - Missing value of required parameter 'number'.",
+            );
+        }
     });
 
     it('Should remap inputs to JSON schema', async () => {

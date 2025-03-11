@@ -73,7 +73,7 @@ export class Make {
 
         const res = await fetch(url, options);
         if (res.status >= 400) {
-            throw createMakeError(res);
+            throw await createMakeError(res);
         }
 
         const contentType = res.headers.get('content-type');

@@ -59,17 +59,30 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 
 server.setRequestHandler(CallToolRequestSchema, async request => {
     if (/^run_scenario_\d+$/.test(request.params.name)) {
-        const output = (await make.scenarios.run(parseInt(request.params.name.substring(13)), request.params.arguments))
-            .outputs;
+        try {
+            const output = (
+                await make.scenarios.run(parseInt(request.params.name.substring(13)), request.params.arguments)
+            ).outputs;
 
-        return {
-            content: [
-                {
-                    type: 'text',
-                    text: output ? JSON.stringify(output, null, 2) : 'Scenario executed successfully.',
-                },
-            ],
-        };
+            return {
+                content: [
+                    {
+                        type: 'text',
+                        text: output ? JSON.stringify(output, null, 2) : 'Scenario executed successfully.',
+                    },
+                ],
+            };
+        } catch (err: unknown) {
+            return {
+                isError: true,
+                content: [
+                    {
+                        type: 'text',
+                        text: String(err),
+                    },
+                ],
+            };
+        }
     }
     throw new Error(`Unknown tool: ${request.params.name}`);
 });

@@ -1,6 +1,6 @@
 {
     "name": "@makehq/mcp-server",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "description": "MCP server for interacting with Make automations",
     "license": "MIT",
     "author": "Make",
