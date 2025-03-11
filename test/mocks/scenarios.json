@@ -1,0 +1,22 @@
+{
+    "scenarios": [
+        {
+            "id": 11652,
+            "name": "Tool: Add to Inventory",
+            "description": "Add a new item to the inventory.",
+            "scheduling": { "type": "on-demand" }
+        },
+        {
+            "id": 11422,
+            "name": "Tool: List Inventory",
+            "description": "",
+            "scheduling": { "type": "on-demand" }
+        },
+        {
+            "id": 12553,
+            "name": "Unsupported scenario",
+            "description": "",
+            "scheduling": { "type": "indefinitely" }
+        }
+    ]
+}

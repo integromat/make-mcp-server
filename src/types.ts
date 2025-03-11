@@ -12,10 +12,15 @@ export type ScenariosServerResponse = {
 };
 
 export type Input = {
-    name: string;
+    name?: string;
     type: string;
-    required: boolean;
-    description?: string;
+    required?: boolean;
+    default?: string | number | boolean | null;
+    options?: {
+        value: string;
+    }[];
+    help?: string;
+    spec?: Input[] | Input;
 };
 
 export type ScenarioInteface = {

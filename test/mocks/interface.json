@@ -1,0 +1,126 @@
+{
+    "interface": {
+        "input": [
+            {
+                "help": "description",
+                "name": "primitive_array",
+                "spec": {
+                    "type": "text",
+                    "default": "",
+                    "required": false,
+                    "multiline": false
+                },
+                "type": "array",
+                "label": "",
+                "required": false
+            },
+            {
+                "help": "description",
+                "name": "array_of_arrays",
+                "spec": {
+                    "spec": {
+                        "type": "text",
+                        "default": "",
+                        "required": false,
+                        "multiline": false
+                    },
+                    "type": "array",
+                    "required": false
+                },
+                "type": "array",
+                "label": "",
+                "required": false
+            },
+            {
+                "help": "description",
+                "name": "array_of_collections",
+                "spec": [
+                    {
+                        "help": "",
+                        "name": "number",
+                        "type": "number",
+                        "label": "",
+                        "default": null,
+                        "required": false
+                    }
+                ],
+                "type": "collection",
+                "label": "",
+                "required": false
+            },
+            {
+                "help": "description",
+                "name": "collection",
+                "spec": [
+                    {
+                        "help": "",
+                        "name": "text",
+                        "type": "text",
+                        "label": "",
+                        "default": "",
+                        "required": false,
+                        "multiline": false
+                    }
+                ],
+                "type": "collection",
+                "label": "",
+                "required": false
+            },
+            {
+                "help": "description",
+                "name": "date",
+                "type": "date",
+                "label": "",
+                "required": false
+            },
+            {
+                "help": "required + default",
+                "name": "number",
+                "type": "number",
+                "label": "",
+                "default": 15,
+                "required": true
+            },
+            {
+                "help": "",
+                "name": "text",
+                "type": "text",
+                "label": "",
+                "default": "",
+                "required": false,
+                "multiline": false
+            },
+            {
+                "help": "",
+                "name": "boolean",
+                "type": "boolean",
+                "label": "",
+                "required": false
+            },
+            {
+                "help": "",
+                "name": "select",
+                "type": "select",
+                "label": "",
+                "options": [
+                    {
+                        "value": "option 1"
+                    },
+                    {
+                        "value": "option 2"
+                    }
+                ],
+                "required": false
+            },
+            {
+                "help": "description",
+                "name": "json",
+                "type": "json",
+                "label": "",
+                "default": "",
+                "required": false
+            }
+        ],
+        "output": []
+    }
+}

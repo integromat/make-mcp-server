@@ -46,7 +46,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
                     return {
                         name: `run_scenario_${scenario.id}`,
                         description: scenario.name + (scenario.description ? ` (${scenario.description})` : ''),
-                        inputSchema: remap(inputs),
+                        inputSchema: remap({
+                            name: 'wrapper',
+                            type: 'collection',
+                            spec: inputs,
+                        }),
                     };
                 }),
         ),

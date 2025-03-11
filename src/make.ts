@@ -67,7 +67,7 @@ export class Make {
             if (url.charAt(1) === '/') {
                 url = `https:${url}`;
             } else {
-                url = `https://${this.zone}/api/v${this.version}/${url}`;
+                url = `https://${this.zone}/api/v${this.version}${url}`;
             }
         }
 

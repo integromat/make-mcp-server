@@ -1,9 +1,17 @@
 {
     "compilerOptions": {
         "target": "ES2022",
-        "moduleResolution": "NodeNext",
-        "module": "NodeNext",
+        "moduleResolution": "node",
+        "module": "ESNext",
+        "resolveJsonModule": true,
         "strict": true,
+        "alwaysStrict": true,
+        "allowJs": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
         "outDir": "./build"
     },
     "include": ["src/**/*"]
