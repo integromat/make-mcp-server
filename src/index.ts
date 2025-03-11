@@ -66,7 +66,7 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
             content: [
                 {
                     type: 'text',
-                    text: JSON.stringify(output, null, 2),
+                    text: output ? JSON.stringify(output, null, 2) : 'Scenario executed successfully.',
                 },
             ],
         };
