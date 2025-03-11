@@ -1,6 +1,6 @@
 {
     "name": "@makehq/mcp-server",
-    "version": "0.4.2",
+    "version": "0.5.0",
     "description": "MCP server for interacting with Make automations",
     "license": "MIT",
     "author": "Make",
@@ -16,6 +16,7 @@
     "scripts": {
         "test": "jest --runInBand --forceExit --verbose false",
         "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+        "prepare": "npm run build",
         "watch": "tsc --watch",
         "inspector": "npx @modelcontextprotocol/inspector build/index.js"
     },

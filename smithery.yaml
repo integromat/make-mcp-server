@@ -1,0 +1,29 @@
+startCommand:
+    type: stdio
+    configSchema:
+        # JSON Schema defining the configuration options for the MCP.
+        type: object
+        properties:
+            makeApiKey:
+                type: string
+                description: You can generate an API key in your Make profile.
+            makeZone:
+                type: string
+                description: The zone your organization is hosted in (e.g., eu2.make.com).
+            makeTeamId:
+                type: string
+                description: You can find the Team ID in the URL of the Team page.
+    commandFunction:
+        # A function that produces the CLI command to start the MCP on stdio.
+        |-
+        (config) => ({
+          "command": "node",
+          "args": [
+            "build/index.js"
+          ],
+          "env": {
+            MAKE_API_KEY: config.makeApiKey,
+            MAKE_ZONE: config.makeZone,
+            MAKE_TEAM: config.makeTeamId
+          }
+        })
