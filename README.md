@@ -1,4 +1,6 @@
-# Make MCP Server
+# Make MCP Server (legacy)
+
+**A modern, cloud-based version of the Make MCP Server is now available. For most use cases, we recommend using [this new version](https://developers.make.com/mcp-server).**
 
 A Model Context Protocol server that enables Make scenarios to be utilized as tools by AI assistants. This integration allows AI systems to trigger and interact with your Make automation workflows.
 
@@ -9,7 +11,7 @@ The MCP server:
 -   Connects to your Make account and identifies all scenarios configured with "On-Demand" scheduling
 -   Parses and resolves input parameters for each scenario, providing AI assistants with meaningful parameter descriptions
 -   Allows AI assistants to invoke scenarios with appropriate parameters
--   Returns scenario output (currently in closed beta) as structured JSON, enabling AI assistants to properly interpret the results
+-   Returns scenario output as structured JSON, enabling AI assistants to properly interpret the results
 
 ## Benefits
 
