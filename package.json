@@ -1,7 +1,7 @@
 {
     "name": "@makehq/mcp-server",
-    "version": "0.5.0",
-    "description": "MCP server for interacting with Make automations",
+    "version": "0.6.0",
+    "description": "MCP server for interacting with Make automations and creating scenarios with Claude",
     "license": "MIT",
     "author": "Make",
     "repository": "github:integromat/make-mcp-server",
