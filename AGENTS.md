@@ -1,65 +1,76 @@
 # make-mcp-server
 
-TypeScript MCP (Model Context Protocol) server that exposes Make.com on-demand scenarios as callable tools for AI assistants. Uses stdio transport (no HTTP server).
+TypeScript MCP server exposing Make.com on-demand scenarios as callable tools for AI assistants. Stdio transport, no HTTP.
+
+## Project map
+
+- `src/index.ts` — server init, MCP handler registration, env var validation
+- `src/make.ts` — Make API client (`Make` + `Scenarios` classes)
+- `src/utils.ts` — `remap()` schema converter, `MakeError`, `createMakeError`
+- `src/types.ts` — TypeScript interfaces
+- `test/server.spec.ts` — tests; fixtures in `test/mocks/`
 
 ## Stack
 
-- TypeScript, ESNext modules, compiled to `build/`
-- MCP SDK: `@modelcontextprotocol/sdk`
-- Testing: Jest + `jest-fetch-mock` (run with `npm test`)
-- Build: `npm run build` (tsc + chmod 755 on entry point)
-- Inspector: `npm run inspector` — launches MCP inspector UI against `build/index.js`
+TypeScript, ESNext modules → `build/`. MCP SDK (`@modelcontextprotocol/sdk`). Jest + `jest-fetch-mock`.
 
-## Source layout
+<important if="you need to run commands to build, test, or inspect">
 
-4 source files in `src/`:
-- `index.ts` — server init, MCP handler registration, env var validation
-- `make.ts` — Make API client (`Make` class + `Scenarios` class)
-- `utils.ts` — `remap()` schema converter, `MakeError`, `createMakeError`
-- `types.ts` — TypeScript interfaces for API shapes
+| Command | What it does |
+|---|---|
+| `npm run build` | tsc + chmod 755 on entry point |
+| `npm test` | Run Jest tests |
+| `npm run inspector` | Launch MCP inspector UI against `build/index.js` |
+</important>
 
-Tests in `test/server.spec.ts`. Fixtures in `test/mocks/` (4 JSON files).
+<important if="you are modifying environment variable handling or server startup">
 
-## Required environment variables
-
-All three must be set or process exits with code 1 on startup:
+Three required env vars (process exits 1 if missing):
 - `MAKE_API_KEY` — used as `Token <key>` (not Bearer)
 - `MAKE_ZONE` — API base hostname (e.g. `eu2.make.com`)
-- `MAKE_TEAM` — integer team ID (parsed via `parseInt`, no validation)
+- `MAKE_TEAM` — integer team ID
+</important>
 
-## Key architectural patterns
+<important if="you are modifying the tool list, MCP handlers, or how scenarios become tools">
 
-### Dynamic tool list
-There is no static tool registry. On every `tools/list` MCP request, the server queries Make API for scenarios, filters to `scheduling.type === 'on-demand'`, fetches each scenario's input interface in parallel, and converts them to MCP tools. Tool names are `run_scenario_{id}`.
+No static tool registry. On every `tools/list` request the server queries Make API for scenarios, filters to `scheduling.type === 'on-demand'`, fetches input interfaces in parallel, converts via `remap()` to JSON Schema. Tool names: `run_scenario_{id}`.
 
-### Make API client (`src/make.ts`)
-- URL assembly: paths starting with `/` get `https://${MAKE_ZONE}/api/v2` prepended; `//`-prefixed paths get `https:` prepended; absolute URLs pass through unchanged
-- Every request gets `user-agent: MakeMCPServer/0.1.0` and `authorization: Token <key>` headers
-- Run calls use `{ data: <arguments>, responsive: true }` — `responsive: true` causes synchronous/awaited execution
-- `listOrganization()` is defined but never called from `index.ts`
+Run calls use `{ data: <arguments>, responsive: true }` for synchronous execution.
+</important>
 
-### Schema conversion — `remap()` (`src/utils.ts`)
-Recursively converts Make `Input[]` → JSON Schema. Always called with a synthetic wrapper `{ type: 'collection', spec: Input[] }`, so top-level `inputSchema` is always `type: object`. Make types map to: `text/date/json` → `string`, `number` → `number`, `boolean` → `boolean`, `collection` → `object`, `array` → `array`, `select` → `string` with `enum`. Field `help` maps to `description` (via `noEmpty()` — returns `undefined` for falsy). `default` included only when not `''` and not `null`.
+<important if="you are modifying the Make API client or URL handling in src/make.ts">
 
-### Error handling asymmetry
-- `CallToolRequest` handler wraps `run()` in try/catch — MakeErrors surface as MCP `isError: true` responses
-- `ListToolsRequest` handler has **no try/catch** — API errors propagate unhandled to the MCP SDK
-- HTTP status >= 400 → `createMakeError()` tries JSON parse for `detail`/`message`/`suberrors`; falls back to `res.statusText`
+URL assembly: `/`-prefixed → `https://${MAKE_ZONE}/api/v2` prepended; `//`-prefixed → `https:` prepended; absolute URLs pass through.
 
-## Testing
+Every request gets `user-agent: MakeMCPServer/0.1.0` and `authorization: Token <key>` headers.
+</important>
 
-- `jest.config.ts`: `moduleNameMapper` strips `.js` extensions (ESM compat), `ts-jest` transform
+<important if="you are modifying schema conversion or the remap function">
+
+`remap()` recursively converts Make `Input[]` → JSON Schema. Always called with synthetic wrapper `{ type: 'collection', spec: Input[] }`, so top-level is always `type: object`. See `src/utils.ts` for the type mapping.
+</important>
+
+<important if="you are modifying error handling or debugging failures">
+
+Error handling asymmetry:
+- `CallToolRequest` handler wraps `run()` in try/catch — MakeErrors → MCP `isError: true`
+- `ListToolsRequest` handler has **no try/catch** — errors propagate unhandled
+- HTTP status >= 400 → `createMakeError()` tries JSON parse for `detail`/`message`/`suberrors`; falls back to `statusText`
+</important>
+
+<important if="you are writing or modifying tests">
+
 - All HTTP mocked via `jest-fetch-mock` — `enableFetchMocks()` at module level, `fetchMock.resetMocks()` in `beforeEach`
-- Mock pattern: `fetchMock.mockResponse(req => { if (req.url !== expectedUrl) throw ...; return Promise.resolve({ body, headers }) })`
-- Error test pattern: try/catch with `instanceof MakeError` guard, then field-by-field assertions
+- Mock pattern: `fetchMock.mockResponse(req => { if (req.url !== expected) throw ...; return Promise.resolve({ body, headers }) })`
+- Error tests: try/catch with `instanceof MakeError` guard, field-by-field assertions
+- `jest.config.ts`: `moduleNameMapper` strips `.js` extensions (ESM compat)
+</important>
 
-## Distribution
+<important if="you are modifying packaging, publishing, or deployment">
 
-- Published as `@makehq/mcp-server`, bin entry `mcp-server-make`
-- MCP registry configs: `smithery.yaml`, `glama.json`
-- `Dockerfile` present for containerized deployment
+Published as `@makehq/mcp-server`, bin entry `mcp-server-make`. Registry configs: `smithery.yaml`, `glama.json`. `Dockerfile` for containerized deployment.
+</important>
 
-## When in Plan Mode
-- Make the plan extremely concise. Sacrifice grammar for the sake of concision.
-- Interview user in detail (for Claude: use the AskUserQuestionTool) about literally anything: technical implementation, UI & UX, concerns, tradeoffs, etc. but make sure the questions are not obvious. Be very in-depth and continue interviewing the user continually until it's complete. Use the answers to create a detailed spec.
-- Make assumptions explicit: When you must proceed under uncertainty, list assumptions up front and continue.
+## Keeping AGENTS.md current
+
+When your changes alter anything described in this file — project map, env vars, architectural patterns, API client behavior, error handling, test patterns, or packaging — notify the user that AGENTS.md should be updated and suggest the specific edit.
