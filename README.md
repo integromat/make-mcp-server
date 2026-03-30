@@ -50,3 +50,7 @@ To use this server with the Claude Desktop app, add the following configuration 
 -   `MAKE_API_KEY` - You can generate an API key in your Make profile.
 -   `MAKE_ZONE` - The zone your organization is hosted in (e.g., `eu2.make.com`).
 -   `MAKE_TEAM` - You can find the ID in the URL of the Team page.
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/integromat-make-mcp-server).
+
