@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: make-mcp-server
+  annotations:
+    github.com/project-slug: integromat/make-mcp-server
+spec:
+  type: library
+  lifecycle: experimental
+  owner: group:default/maia
+  partOfCoreProduct: false
