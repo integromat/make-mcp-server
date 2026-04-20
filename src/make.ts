@@ -1,8 +1,12 @@
 import type {
+    CreateScenarioRequest,
+    CreateScenarioResponse,
+    ListTemplatesResponse,
     Scenario,
     ScenarioInteface,
     ScenarioInterfaceServerResponse,
     ScenarioRunServerResponse,
+    ScenarioTemplate,
     ScenariosServerResponse,
 } from './types.js';
 import { createMakeError } from './utils.js';
@@ -38,6 +42,30 @@ class Scenarios {
                 'content-type': 'application/json',
             },
         });
+    }
+
+    // New method to create a scenario
+    async create(request: CreateScenarioRequest): Promise<CreateScenarioResponse> {
+        return await this.#fetch<CreateScenarioResponse>(`/scenarios`, {
+            method: 'POST',
+            body: JSON.stringify(request),
+            headers: {
+                'content-type': 'application/json',
+            },
+        });
+    }
+
+    // New method to list available templates
+    async listTemplates(category?: string): Promise<ScenarioTemplate[]> {
+        const url = category 
+            ? `/templates?category=${encodeURIComponent(category)}`
+            : '/templates';
+        return (await this.#fetch<ListTemplatesResponse>(url)).templates;
+    }
+
+    // New method to get template details
+    async getTemplate(templateId: string): Promise<ScenarioTemplate> {
+        return await this.#fetch<ScenarioTemplate>(`/templates/${templateId}`);
     }
 }
 
