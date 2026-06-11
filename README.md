@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/integromat-make-mcp-server-badge.png)](https://mseep.ai/app/integromat-make-mcp-server)
+
 # Make MCP Server (legacy)
 
 **A modern, cloud-based version of the Make MCP Server is now available. For most use cases, we recommend using [this new version](https://developers.make.com/mcp-server).**
