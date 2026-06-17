@@ -1,4 +1,5 @@
 # Make MCP Server (legacy)
+[![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/integromat/make-mcp-server)](https://archestra.ai/mcp-catalog/integromat__make-mcp-server)
 
 **A modern, cloud-based version of the Make MCP Server is now available. For most use cases, we recommend using [this new version](https://developers.make.com/mcp-server).**
 
