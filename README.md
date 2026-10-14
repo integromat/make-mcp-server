@@ -40,7 +40,7 @@ To use this server with the Claude Desktop app, add the following configuration 
             "env": {
                 "MAKE_API_KEY": "<your-api-key>",
                 "MAKE_ZONE": "<your-zone>",
-                "MAKE_TEAM": "<your-team-id>"
+                "MAKE_PROJECT": "<your-project-id>"
             }
         }
     }
@@ -49,4 +49,4 @@ To use this server with the Claude Desktop app, add the following configuration 
 
 -   `MAKE_API_KEY` - You can generate an API key in your Make profile.
 -   `MAKE_ZONE` - The zone your organization is hosted in (e.g., `eu2.make.com`).
--   `MAKE_TEAM` - You can find the ID in the URL of the Team page.
+-   `MAKE_PROJECT` - You can find the ID in the URL of the Project page. Teams were renamed to Projects; the legacy `MAKE_TEAM` variable is still accepted as a fallback (if both are set, they must match).

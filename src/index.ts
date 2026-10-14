@@ -15,6 +15,8 @@ const server = new Server(
         capabilities: {
             tools: {},
         },
+        instructions:
+            'Teams were renamed to Projects; `teamId` is now `projectId`. Legacy `teamId`/`MAKE_TEAM` are still accepted.',
     },
 );
 
@@ -26,13 +28,20 @@ if (!process.env.MAKE_ZONE) {
     console.error('Please provide MAKE_ZONE environment variable.');
     process.exit(1);
 }
-if (!process.env.MAKE_TEAM) {
-    console.error('Please provide MAKE_TEAM environment variable.');
+
+const { MAKE_PROJECT, MAKE_TEAM } = process.env;
+if (MAKE_PROJECT && MAKE_TEAM && MAKE_PROJECT !== MAKE_TEAM) {
+    console.error('MAKE_PROJECT and MAKE_TEAM (legacy) are both set but differ. Set only MAKE_PROJECT.');
+    process.exit(1);
+}
+const projectIdEnv = MAKE_PROJECT || MAKE_TEAM;
+if (!projectIdEnv) {
+    console.error('Please provide MAKE_PROJECT (formerly MAKE_TEAM) environment variable.');
     process.exit(1);
 }
 
 const make = new Make(process.env.MAKE_API_KEY, process.env.MAKE_ZONE);
-const teamId = parseInt(process.env.MAKE_TEAM);
+const teamId = parseInt(projectIdEnv);
 
 server.setRequestHandler(ListToolsRequestSchema, async () => {
     const scenarios = await make.scenarios.list(teamId);

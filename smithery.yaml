@@ -10,9 +10,13 @@ startCommand:
             makeZone:
                 type: string
                 description: The zone your organization is hosted in (e.g., eu2.make.com).
+            makeProjectId:
+                type: string
+                description: You can find the Project ID in the URL of the Project page.
             makeTeamId:
                 type: string
-                description: You can find the Team ID in the URL of the Team page.
+                deprecated: true
+                description: Deprecated, use makeProjectId. Teams were renamed to Projects; this is the same ID.
     commandFunction:
         # A function that produces the CLI command to start the MCP on stdio.
         |-
@@ -24,6 +28,7 @@ startCommand:
           "env": {
             MAKE_API_KEY: config.makeApiKey,
             MAKE_ZONE: config.makeZone,
+            MAKE_PROJECT: config.makeProjectId,
             MAKE_TEAM: config.makeTeamId
           }
         })
