@@ -4,6 +4,7 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { Make } from './make.js';
+import { resolveProjectId } from './project-id.js';
 import { remap } from './utils.js';
 
 const server = new Server(
@@ -26,13 +27,16 @@ if (!process.env.MAKE_ZONE) {
     console.error('Please provide MAKE_ZONE environment variable.');
     process.exit(1);
 }
-if (!process.env.MAKE_TEAM) {
-    console.error('Please provide MAKE_TEAM environment variable.');
+
+const resolved = resolveProjectId(process.env);
+if ('error' in resolved) {
+    console.error(resolved.error);
     process.exit(1);
 }
 
 const make = new Make(process.env.MAKE_API_KEY, process.env.MAKE_ZONE);
-const teamId = parseInt(process.env.MAKE_TEAM);
+// Make's public API still takes the project as `teamId` in its query string; only this server's own config is renamed.
+const teamId = resolved.projectId;
 
 server.setRequestHandler(ListToolsRequestSchema, async () => {
     const scenarios = await make.scenarios.list(teamId);

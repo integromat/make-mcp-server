@@ -28,7 +28,7 @@ TypeScript, ESNext modules → `build/`. MCP SDK (`@modelcontextprotocol/sdk`). 
 Three required env vars (process exits 1 if missing):
 - `MAKE_API_KEY` — used as `Token <key>` (not Bearer)
 - `MAKE_ZONE` — API base hostname (e.g. `eu2.make.com`)
-- `MAKE_TEAM` — integer team ID
+- `MAKE_PROJECT` — integer project ID (legacy `MAKE_TEAM` accepted as fallback; exits 1 if both set and differ)
 </important>
 
 <important if="you are modifying the tool list, MCP handlers, or how scenarios become tools">
