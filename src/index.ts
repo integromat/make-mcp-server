@@ -4,6 +4,7 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { Make } from './make.js';
+import { resolveProjectId } from './project-id.js';
 import { remap } from './utils.js';
 
 const server = new Server(
@@ -15,8 +16,6 @@ const server = new Server(
         capabilities: {
             tools: {},
         },
-        instructions:
-            'Teams were renamed to Projects; `teamId` is now `projectId`. Legacy `teamId`/`MAKE_TEAM` are still accepted.',
     },
 );
 
@@ -29,19 +28,15 @@ if (!process.env.MAKE_ZONE) {
     process.exit(1);
 }
 
-const { MAKE_PROJECT, MAKE_TEAM } = process.env;
-if (MAKE_PROJECT && MAKE_TEAM && MAKE_PROJECT !== MAKE_TEAM) {
-    console.error('MAKE_PROJECT and MAKE_TEAM (legacy) are both set but differ. Set only MAKE_PROJECT.');
-    process.exit(1);
-}
-const projectIdEnv = MAKE_PROJECT || MAKE_TEAM;
-if (!projectIdEnv) {
-    console.error('Please provide MAKE_PROJECT (formerly MAKE_TEAM) environment variable.');
+const resolved = resolveProjectId(process.env);
+if ('error' in resolved) {
+    console.error(resolved.error);
     process.exit(1);
 }
 
 const make = new Make(process.env.MAKE_API_KEY, process.env.MAKE_ZONE);
-const teamId = parseInt(projectIdEnv);
+// Make's public API still takes the project as `teamId` in its query string; only this server's own config is renamed.
+const teamId = resolved.projectId;
 
 server.setRequestHandler(ListToolsRequestSchema, async () => {
     const scenarios = await make.scenarios.list(teamId);
